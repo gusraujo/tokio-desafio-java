@@ -1,4 +1,4 @@
-package br.com.tokio.transfer.scheduler.entity;
+package br.com.tokio.transfer.scheduler.repository.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

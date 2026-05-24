@@ -1,7 +1,7 @@
 package br.com.tokio.transfer.scheduler.service;
 
-import br.com.tokio.transfer.scheduler.entity.ScheduledTransferEntity;
-import br.com.tokio.transfer.scheduler.mapper.ScheduledTransferMapper;
+import br.com.tokio.transfer.scheduler.repository.entity.ScheduledTransferEntity;
+import br.com.tokio.transfer.scheduler.repository.mapper.ScheduledTransferMapper;
 import br.com.tokio.transfer.scheduler.model.ScheduledTransfer;
 import br.com.tokio.transfer.scheduler.repository.ScheduledTransferRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

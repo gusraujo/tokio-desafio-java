@@ -1,6 +1,6 @@
 package br.com.tokio.transfer.scheduler.service;
 
-import br.com.tokio.transfer.scheduler.mapper.ScheduledTransferMapper;
+import br.com.tokio.transfer.scheduler.repository.mapper.ScheduledTransferMapper;
 import br.com.tokio.transfer.scheduler.model.ScheduledTransfer;
 import br.com.tokio.transfer.scheduler.repository.ScheduledTransferRepository;
 import lombok.RequiredArgsConstructor;

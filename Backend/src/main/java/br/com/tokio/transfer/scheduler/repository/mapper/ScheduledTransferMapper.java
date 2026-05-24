@@ -1,6 +1,6 @@
-package br.com.tokio.transfer.scheduler.mapper;
+package br.com.tokio.transfer.scheduler.repository.mapper;
 
-import br.com.tokio.transfer.scheduler.entity.ScheduledTransferEntity;
+import br.com.tokio.transfer.scheduler.repository.entity.ScheduledTransferEntity;
 import br.com.tokio.transfer.scheduler.model.ScheduledTransfer;
 import org.springframework.stereotype.Component;
 
