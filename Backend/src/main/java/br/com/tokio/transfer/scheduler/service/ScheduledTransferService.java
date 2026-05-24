@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +50,12 @@ public class ScheduledTransferService {
                         scheduledTransferMapper.toEntity(scheduledTransfer)
                 )
         );
+    }
+
+    public List<ScheduledTransfer> findAll() {
+        return scheduledTransferRepository.findAll()
+                .stream()
+                .map(scheduledTransferMapper::toDomain)
+                .collect(Collectors.toList());
     }
 }
