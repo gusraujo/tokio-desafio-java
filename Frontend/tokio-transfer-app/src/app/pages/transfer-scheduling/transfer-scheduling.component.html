@@ -28,8 +28,9 @@
             maxlength="10"
             [class.invalid]="sourceAccount.touched && (sourceAccount.invalid || fieldErrors['sourceAccount'])"
           />
-          @if (fieldError('sourceAccount')) {
-            <span class="field-error">{{ fieldError('sourceAccount') }}</span>
+          @let sourceErr = fieldError('sourceAccount');
+          @if (sourceErr) {
+            <span class="field-error">{{ sourceErr }}</span>
           }
         </div>
 
@@ -43,8 +44,9 @@
             maxlength="10"
             [class.invalid]="destinationAccount.touched && (destinationAccount.invalid || sameAccountError || fieldErrors['destinationAccount'])"
           />
-          @if (fieldError('destinationAccount')) {
-            <span class="field-error">{{ fieldError('destinationAccount') }}</span>
+          @let destErr = fieldError('destinationAccount');
+          @if (destErr) {
+            <span class="field-error">{{ destErr }}</span>
           }
           @if (sameAccountError) {
             <span class="field-error">Conta de destino deve ser diferente da conta de origem.</span>
@@ -66,8 +68,9 @@
                 [class.invalid]="amount.touched && amount.invalid"
               />
             </div>
-            @if (fieldError('amount')) {
-              <span class="field-error">{{ fieldError('amount') }}</span>
+            @let amountErr = fieldError('amount');
+            @if (amountErr) {
+              <span class="field-error">{{ amountErr }}</span>
             }
           </div>
 
@@ -77,10 +80,11 @@
               id="transferDate"
               type="date"
               formControlName="transferDate"
-              [class.invalid]="transferDate.touched && transferDate.invalid"
+              [class.invalid]="transferDate.touched && (transferDate.invalid || fieldErrors['transferDate'])"
             />
-            @if (fieldError('transferDate')) {
-              <span class="field-error">{{ fieldError('transferDate') }}</span>
+            @let dateErr = fieldError('transferDate');
+            @if (dateErr) {
+              <span class="field-error">{{ dateErr }}</span>
             }
           </div>
         </div>

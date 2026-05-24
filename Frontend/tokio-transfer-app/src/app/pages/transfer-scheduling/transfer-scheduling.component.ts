@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -20,6 +20,11 @@ function differentAccountsValidator(group: AbstractControl): ValidationErrors | 
   return null;
 }
 
+// Erros da API que devem ser associados ao campo transferDate
+const DATE_API_ERRORS = new Set([
+  'no applicable fee for this transfer date',
+]);
+
 @Component({
   selector: 'app-transfer-scheduling',
   standalone: true,
@@ -30,6 +35,7 @@ function differentAccountsValidator(group: AbstractControl): ValidationErrors | 
 export class TransferSchedulingComponent implements OnInit {
   private fb = inject(FormBuilder);
   private service = inject(ScheduledTransferService);
+  private cdr = inject(ChangeDetectorRef);
 
   form!: FormGroup;
   transfers: ScheduledTransferResponse[] = [];
@@ -63,10 +69,12 @@ export class TransferSchedulingComponent implements OnInit {
       next: (data) => {
         this.transfers = data;
         this.loadingList = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.loadingList = false;
         this.listLoadError = true;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -78,12 +86,11 @@ export class TransferSchedulingComponent implements OnInit {
 
   fieldError(field: string): string | null {
     const ctrl = this.form.get(field);
-    if (!ctrl || !ctrl.touched) return null;
+    if (!ctrl?.touched) return null;
     if (ctrl.errors?.['required']) return 'Campo obrigatório.';
     if (ctrl.errors?.['pattern']) return 'Deve conter exatamente 10 dígitos numéricos.';
     if (ctrl.errors?.['min']) return 'O valor deve ser maior que zero.';
-    if (this.fieldErrors[field]) return this.fieldErrors[field];
-    return null;
+    return this.fieldErrors[field] ?? null;
   }
 
   get sameAccountError(): boolean {
@@ -111,11 +118,13 @@ export class TransferSchedulingComponent implements OnInit {
         this.successMessage = 'Transferência agendada com sucesso!';
         this.form.reset();
         this.submitting = false;
+        this.cdr.markForCheck();
         this.loadTransfers();
       },
       error: (err) => {
         this.submitting = false;
         this.handleApiError(err);
+        this.cdr.markForCheck();
       },
     });
   }
@@ -125,12 +134,20 @@ export class TransferSchedulingComponent implements OnInit {
       this.errorMessage = 'Serviço indisponível. Verifique se a API está em execução.';
       return;
     }
+
     const apiError: ApiErrorResponse = err.error;
+
     if (apiError.fieldErrors && Object.keys(apiError.fieldErrors).length > 0) {
-      this.fieldErrors = apiError.fieldErrors;
+      this.fieldErrors = { ...apiError.fieldErrors };
     }
+
     if (apiError.message) {
       this.errorMessage = this.translateError(apiError.message);
+
+      // Erros de negócio relacionados à data são associados ao campo para feedback visual
+      if (DATE_API_ERRORS.has(apiError.message)) {
+        this.fieldErrors = { ...this.fieldErrors, transferDate: this.errorMessage };
+      }
     } else if (!apiError.fieldErrors) {
       this.errorMessage = 'Ocorreu um erro inesperado. Tente novamente.';
     }
@@ -156,11 +173,5 @@ export class TransferSchedulingComponent implements OnInit {
     if (!dateStr) return '-';
     const [year, month, day] = dateStr.split('-');
     return `${day}/${month}/${year}`;
-  }
-
-  formatDateTime(dateStr: string): string {
-    if (!dateStr) return '-';
-    const date = new Date(dateStr);
-    return date.toLocaleString('pt-BR');
   }
 }
