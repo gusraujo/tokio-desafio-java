@@ -7,6 +7,8 @@ A aplicação permite o agendamento de transferências financeiras, calcula auto
 
 ## Tecnologias
 
+### Backend
+
 - Java 11
 - Spring Boot 2.7.18
 - Maven
@@ -17,6 +19,18 @@ A aplicação permite o agendamento de transferências financeiras, calcula auto
 - Lombok
 - JUnit 5
 - Mockito
+
+### Frontend
+
+- Angular 21 (standalone components)
+- TypeScript
+- Reactive Forms
+- Angular HttpClient (proxy para o backend)
+- CSS puro (responsivo, sem bibliotecas externas)
+
+## Tela principal
+
+![Tela de agendamento de transferências](docs/images/fe-screenshot.png)
 
 ## Decisoes arquiteturais
 
@@ -146,3 +160,54 @@ Resposta esperada:
   }
 ]
 ```
+
+## Como executar o frontend
+
+Entre na pasta do frontend:
+
+```bash
+cd Frontend/tokio-transfer-app
+```
+
+Instale as dependências (apenas na primeira vez):
+
+```bash
+npm install
+```
+
+Execute a aplicação:
+
+```bash
+npm start
+```
+
+O frontend sobe em:
+
+```text
+http://localhost:4200
+```
+
+As chamadas para `/api/*` são redirecionadas automaticamente para `http://localhost:8082` via proxy de desenvolvimento. É necessário que o backend esteja rodando para que o frontend funcione.
+
+## Arquitetura do frontend
+
+```text
+src/app/
+├── models/
+│   └── transfer.models.ts        # Interfaces: Request, Response e ApiError
+├── services/
+│   └── scheduled-transfer.service.ts  # Chamadas HTTP ao backend
+└── pages/
+    └── transfer-scheduling/
+        ├── *.component.ts        # Lógica, Reactive Forms e tratamento de erros
+        ├── *.component.html      # Template com @if/@for (Angular 17+ block syntax)
+        └── *.component.css       # Estilos responsivos
+```
+
+Principais decisões:
+
+- Componente único com formulário, resumo e tabela na mesma tela.
+- Proxy de desenvolvimento configurado em `proxy.conf.json` evita CORS em desenvolvimento.
+- Validações no frontend: campos obrigatórios, exatamente 10 dígitos por conta, conta origem ≠ destino.
+- Erros da API exibidos por campo (`fieldErrors`) ou como alerta geral (`message`).
+- Locale `pt-BR` registrado globalmente para formatação de moeda e datas.
