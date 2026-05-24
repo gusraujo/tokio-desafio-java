@@ -233,3 +233,15 @@ Principais decisões:
 - Proxy de desenvolvimento configurado em `proxy.conf.json` evita CORS em desenvolvimento.
 - Validações no frontend: campos obrigatórios, exatamente 10 dígitos por conta, conta origem ≠ destino.
 - Erros da API exibidos por campo (`fieldErrors`) ou como alerta geral (`message`).
+- Locale `pt-BR` registrado globalmente para formatação de moeda e datas.
+
+## Possíveis melhorias
+
+Alguns pontos foram deixados fora do escopo inicial para manter a solução objetiva, mas seriam evoluções naturais para uma próxima etapa:
+
+- Implementar idempotência no agendamento de transferências, evitando duplicidade caso o cliente envie a mesma requisição mais de uma vez por instabilidade de rede ou timeout.
+- Criar cadastro de usuários e autenticação, vinculando os agendamentos ao usuário autenticado e permitindo que cada pessoa visualize apenas o próprio extrato.
+- Substituir o banco H2 em memória por um banco persistente, como PostgreSQL ou MySQL, mantendo scripts de migração com Flyway ou Liquibase.
+- Adicionar paginação e ordenação no endpoint de extrato, principalmente para cenários com muitos agendamentos.
+- Melhorar observabilidade com logs estruturados, métricas e rastreamento de erros.
+- Ampliar a cobertura de testes de integração entre API, banco e regras de negócio.
