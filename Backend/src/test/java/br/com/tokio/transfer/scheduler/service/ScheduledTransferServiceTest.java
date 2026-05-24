@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@DisplayName("Scheduled transfer service")
+@DisplayName("Caso de uso de agendamento de transferencias")
 class ScheduledTransferServiceTest {
 
     private final ScheduledTransferRepository repository = mock(ScheduledTransferRepository.class);
@@ -30,7 +31,8 @@ class ScheduledTransferServiceTest {
     );
 
     @Test
-    void schedule_shouldCreateScheduledTransferWithCalculatedFee() {
+    @DisplayName("deve gerar data de agendamento, calcular taxa e persistir transferencia")
+    void shouldGenerateSchedulingDateCalculateFeeAndPersistTransfer() {
         LocalDate today = LocalDate.now();
         LocalDate transferDate = today.plusDays(10);
 
@@ -56,17 +58,20 @@ class ScheduledTransferServiceTest {
                 transferDate
         );
 
-        assertEquals(1L, scheduledTransfer.getId());
-        assertEquals("1234567890", scheduledTransfer.getSourceAccount());
-        assertEquals("0987654321", scheduledTransfer.getDestinationAccount());
-        assertEquals(new BigDecimal("1000.00"), scheduledTransfer.getAmount());
-        assertEquals(new BigDecimal("12.00"), scheduledTransfer.getFee());
-        assertEquals(transferDate, scheduledTransfer.getTransferDate());
-        assertEquals(today, scheduledTransfer.getSchedulingDate());
+        assertAll(
+                () -> assertEquals(1L, scheduledTransfer.getId()),
+                () -> assertEquals("1234567890", scheduledTransfer.getSourceAccount()),
+                () -> assertEquals("0987654321", scheduledTransfer.getDestinationAccount()),
+                () -> assertEquals(new BigDecimal("1000.00"), scheduledTransfer.getAmount()),
+                () -> assertEquals(new BigDecimal("12.00"), scheduledTransfer.getFee()),
+                () -> assertEquals(transferDate, scheduledTransfer.getTransferDate()),
+                () -> assertEquals(today, scheduledTransfer.getSchedulingDate())
+        );
     }
 
     @Test
-    void schedule_shouldThrowException_whenTransferDateHasNoApplicableFee() {
+    @DisplayName("deve bloquear agendamento quando nao houver taxa aplicavel")
+    void shouldBlockSchedulingWhenThereIsNoApplicableFee() {
         LocalDate transferDate = LocalDate.now().plusDays(51);
 
         IllegalArgumentException exception = assertThrows(

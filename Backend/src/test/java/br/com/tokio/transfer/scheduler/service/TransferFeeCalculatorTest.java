@@ -11,12 +11,12 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DisplayName("Transfer fee calculator")
+@DisplayName("Regra de calculo de taxa de transferencia")
 class TransferFeeCalculatorTest {
 
     private final TransferFeeCalculator calculator = new TransferFeeCalculator();
 
-    @ParameterizedTest(name = "should calculate fee {2} when transfer is scheduled after {0} days")
+    @ParameterizedTest(name = "deve calcular taxa {2} para transferencia de {1} agendada em {0} dia(s)")
     @CsvSource({
             "0, 1000.00, 28.00",
             "1, 1000.00, 12.00",
@@ -48,7 +48,8 @@ class TransferFeeCalculatorTest {
     }
 
     @Test
-    void calculate_shouldThrowException_whenTransferDateHasNoApplicableRule() {
+    @DisplayName("deve rejeitar transferencia fora das faixas de taxa")
+    void shouldRejectTransferDateWithoutApplicableFeeRule() {
         LocalDate schedulingDate = LocalDate.of(2026, 5, 24);
         LocalDate transferDate = schedulingDate.plusDays(51);
 
@@ -61,7 +62,8 @@ class TransferFeeCalculatorTest {
     }
 
     @Test
-    void calculate_shouldThrowException_whenAmountIsZero() {
+    @DisplayName("deve rejeitar transferencia com valor zero")
+    void shouldRejectTransferAmountEqualToZero() {
         LocalDate schedulingDate = LocalDate.of(2026, 5, 24);
 
         IllegalArgumentException exception = assertThrows(
@@ -73,7 +75,8 @@ class TransferFeeCalculatorTest {
     }
 
     @Test
-    void calculate_shouldThrowException_whenAmountIsNegative() {
+    @DisplayName("deve rejeitar transferencia com valor negativo")
+    void shouldRejectNegativeTransferAmount() {
         LocalDate schedulingDate = LocalDate.of(2026, 5, 24);
 
         IllegalArgumentException exception = assertThrows(
