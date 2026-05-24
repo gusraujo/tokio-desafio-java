@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8082/scheduled-transfers"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  frontend:
+    build:
+      context: ./Frontend/tokio-transfer-app
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
