@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -28,6 +28,7 @@ const DATE_API_ERRORS = new Set([
 @Component({
   selector: 'app-transfer-scheduling',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './transfer-scheduling.component.html',
   styleUrl: './transfer-scheduling.component.css',
