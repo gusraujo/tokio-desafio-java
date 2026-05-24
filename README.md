@@ -32,7 +32,7 @@ A aplicação permite o agendamento de transferências financeiras, calcula auto
 
 ![Tela de agendamento de transferências](docs/images/fe-screenshot.png)
 
-## Decisoes arquiteturais
+## Decisões arquiteturais
 
 O backend foi organizado em Layered Architecture:
 
@@ -233,4 +233,3 @@ Principais decisões:
 - Proxy de desenvolvimento configurado em `proxy.conf.json` evita CORS em desenvolvimento.
 - Validações no frontend: campos obrigatórios, exatamente 10 dígitos por conta, conta origem ≠ destino.
 - Erros da API exibidos por campo (`fieldErrors`) ou como alerta geral (`message`).
-- Locale `pt-BR` registrado globalmente para formatação de moeda e datas.
