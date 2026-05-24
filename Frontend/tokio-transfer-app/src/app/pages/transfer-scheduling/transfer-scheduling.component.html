@@ -1,0 +1,182 @@
+<div class="page">
+  <header class="page-header">
+    <h1>Agendamento de transferências</h1>
+    <p class="page-subtitle">Programe transferências entre contas e acompanhe os agendamentos.</p>
+  </header>
+
+  <div class="top-grid">
+    <!-- Formulário -->
+    <div class="card">
+      <h2 class="card-title">Nova transferência</h2>
+
+      @if (successMessage) {
+        <div class="alert alert-success">{{ successMessage }}</div>
+      }
+
+      @if (errorMessage) {
+        <div class="alert alert-error">{{ errorMessage }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="field">
+          <label for="sourceAccount">Conta de origem</label>
+          <input
+            id="sourceAccount"
+            type="text"
+            formControlName="sourceAccount"
+            placeholder="10 dígitos numéricos"
+            maxlength="10"
+            [class.invalid]="sourceAccount.touched && (sourceAccount.invalid || fieldErrors['sourceAccount'])"
+          />
+          @if (fieldError('sourceAccount')) {
+            <span class="field-error">{{ fieldError('sourceAccount') }}</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="destinationAccount">Conta de destino</label>
+          <input
+            id="destinationAccount"
+            type="text"
+            formControlName="destinationAccount"
+            placeholder="10 dígitos numéricos"
+            maxlength="10"
+            [class.invalid]="destinationAccount.touched && (destinationAccount.invalid || sameAccountError || fieldErrors['destinationAccount'])"
+          />
+          @if (fieldError('destinationAccount')) {
+            <span class="field-error">{{ fieldError('destinationAccount') }}</span>
+          }
+          @if (sameAccountError) {
+            <span class="field-error">Conta de destino deve ser diferente da conta de origem.</span>
+          }
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="amount">Valor</label>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">R$</span>
+              <input
+                id="amount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                formControlName="amount"
+                placeholder="0,00"
+                [class.invalid]="amount.touched && amount.invalid"
+              />
+            </div>
+            @if (fieldError('amount')) {
+              <span class="field-error">{{ fieldError('amount') }}</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="transferDate">Data da transferência</label>
+            <input
+              id="transferDate"
+              type="date"
+              formControlName="transferDate"
+              [class.invalid]="transferDate.touched && transferDate.invalid"
+            />
+            @if (fieldError('transferDate')) {
+              <span class="field-error">{{ fieldError('transferDate') }}</span>
+            }
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="submitting">
+          @if (submitting) {
+            <span class="spinner"></span> Agendando...
+          } @else {
+            Agendar transferência
+          }
+        </button>
+      </form>
+    </div>
+
+    <!-- Resumo do último agendamento -->
+    <div class="card">
+      <h2 class="card-title">Último agendamento</h2>
+
+      @if (!lastTransfer) {
+        <div class="empty-summary">
+          <p>Nenhum agendamento ainda.</p>
+        </div>
+      } @else {
+        <dl class="summary-list">
+          <div class="summary-row">
+            <dt>Valor da transferência</dt>
+            <dd>{{ formatCurrency(lastTransfer.amount) }}</dd>
+          </div>
+          <div class="summary-row">
+            <dt>Taxa calculada</dt>
+            <dd class="fee">{{ formatCurrency(lastTransfer.fee) }}</dd>
+          </div>
+          <div class="summary-row summary-total">
+            <dt>Valor total</dt>
+            <dd>{{ formatCurrency(lastTransfer.totalAmount) }}</dd>
+          </div>
+          <div class="summary-row">
+            <dt>Data de agendamento</dt>
+            <dd>{{ formatDate(lastTransfer.schedulingDate) }}</dd>
+          </div>
+          <div class="summary-row">
+            <dt>Data da transferência</dt>
+            <dd>{{ formatDate(lastTransfer.transferDate) }}</dd>
+          </div>
+        </dl>
+      }
+    </div>
+  </div>
+
+  <!-- Extrato -->
+  <div class="card table-card">
+    <h2 class="card-title">Extrato de agendamentos</h2>
+
+    @if (loadingList) {
+      <div class="loading">
+        <span class="spinner spinner-dark"></span> Carregando extrato...
+      </div>
+    } @else if (listLoadError) {
+      <div class="empty-table error-table">
+        <p>Não foi possível carregar o extrato. Verifique se a API está em execução.</p>
+      </div>
+    } @else if (transfers.length === 0) {
+      <div class="empty-table">
+        <p>Nenhum agendamento encontrado.</p>
+      </div>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Origem</th>
+              <th>Destino</th>
+              <th class="text-right">Valor</th>
+              <th class="text-right">Taxa</th>
+              <th class="text-right">Total</th>
+              <th>Transferência</th>
+              <th>Agendado em</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of transfers; track t.id) {
+              <tr>
+                <td class="id-cell">{{ formatId(t.id) }}</td>
+                <td>{{ t.sourceAccount }}</td>
+                <td>{{ t.destinationAccount }}</td>
+                <td class="text-right mono">{{ formatCurrency(t.amount) }}</td>
+                <td class="text-right mono fee">{{ formatCurrency(t.fee) }}</td>
+                <td class="text-right mono">{{ formatCurrency(t.totalAmount) }}</td>
+                <td>{{ formatDate(t.transferDate) }}</td>
+                <td class="date-muted">{{ formatDate(t.schedulingDate) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
