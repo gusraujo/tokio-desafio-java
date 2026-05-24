@@ -1,30 +1,148 @@
 # tokio-desafio-java
 
-Projeto desenvolvido como parte de uma avaliação técnica para processo seletivo da Tokio Marine.
+Projeto desenvolvido como parte de uma avaliacao tecnica para processo seletivo da Tokio Marine.
 
-A aplicação tem como objetivo permitir o agendamento de transferências financeiras, calculando automaticamente a taxa aplicável de acordo com a data escolhida para a transferência. 
-O sistema também permite consultar o extrato de todos os agendamentos cadastrados.
+A aplicação permite o agendamento de transferências financeiras, calcula automáticamente a taxa aplicável de acordo com a data escolhida para a transferência e permite consultar o extrato dos agendamentos cadastrados.
 
-O projeto foi desenvolvido utilizando Java 11, Spring Boot e Angular, com persistência em banco de dados em memória H2.
 
-## Requisitos funcionais
+## Tecnologias
 
-- Permitir o agendamento de transferências financeiras.
-- Informar conta de origem, conta de destino, valor e data da transferência.
-- Gerar automaticamente a data de agendamento.
-- Calcular automaticamente a taxa conforme a diferença de dias entre agendamento e transferência.
-- Bloquear agendamentos quando não houver taxa aplicável.
-- Listar todos os agendamentos cadastrados.
-- Persistir os dados em banco de dados em memória H2.
+- Java 11
+- Spring Boot 2.7.18
+- Maven
+- Spring Web
+- Spring Data JPA
+- Bean Validation
+- H2 Database
+- Lombok
+- JUnit 5
+- Mockito
 
-## Requisitos não funcionais
+## Decisoes arquiteturais
 
-- Backend desenvolvido em Java 11 com Spring Boot.
-- Frontend desenvolvido em Angular.
-- Persistência em banco H2.
-- Projeto versionado no GitHub com histórico de commits.
-- README com decisões arquiteturais, ferramentas, versões e instruções de execução.
-- Regras de negócio cobertas por testes unitários.
-- Uso de BigDecimal para valores financeiros.
-- Tratamento padronizado de erros na API.
-- Organização em Layered Architecture.
+O backend foi organizado em Layered Architecture:
+
+```text
+controller  -> endpoints REST, DTOs e mappers da API
+service     -> casos de uso e regras de negocio
+model       -> dominio puro da transferencia agendada
+repository  -> persistencia, entidade JPA e mapper de banco
+exception   -> tratamento padronizado de erros
+```
+
+Principais decisoes:
+
+- `ScheduledTransfer` foi mantida como objeto de dominio, separado da entidade JPA.
+- `ScheduledTransferEntity` representa a tabela no banco H2.
+- `ScheduledTransferMapper` converte entre dominio e persistencia.
+- `ScheduledTransferControllerMapper` converte dominio para resposta da API.
+- O cálculo da taxa foi isolado em `TransferFeeCalculator`.
+- Valores financeiros usam `BigDecimal`.
+- Erros da API sao padronizados por `GlobalExceptionHandler`.
+
+
+## Como executar o backend
+
+Entre na pasta do backend:
+
+```bash
+cd Backend
+```
+
+Execute a aplicação:
+
+```bash
+mvn spring-boot:run
+```
+
+A API sobe em:
+
+```text
+http://localhost:8082
+```
+
+Console do H2:
+
+```text
+http://localhost:8082/h2-console
+```
+
+Dados do H2:
+
+```text
+JDBC URL: jdbc:h2:mem:tokiodb
+User: sa
+Password: deixe vazio
+```
+
+## Como executar os testes
+
+Na pasta `Backend`, execute:
+
+```bash
+mvn test
+```
+
+## Endpoints
+
+```text
+POST /scheduled-transfers
+GET  /scheduled-transfers
+```
+
+## Exemplos com curl
+
+Os exemplos abaixo consideram que a API esta rodando em `http://localhost:8082`.
+
+Observacao: as datas dos exemplos foram montadas considerando a execucao em `2026-05-24`. Se executar em outro dia, ajuste `transferDate` para ficar dentro ou fora das faixas desejadas.
+
+### Agendar transferencia valida
+
+```bash
+curl -X POST http://localhost:8082/scheduled-transfers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sourceAccount": "1234567890",
+    "destinationAccount": "0987654321",
+    "amount": 1000.00,
+    "transferDate": "2026-06-03"
+  }'
+```
+
+Resposta esperada:
+
+```json
+{
+  "id": 1,
+  "sourceAccount": "1234567890",
+  "destinationAccount": "0987654321",
+  "amount": 1000.00,
+  "fee": 12.00,
+  "totalAmount": 1012.00,
+  "transferDate": "2026-06-03",
+  "schedulingDate": "2026-05-24"
+}
+```
+
+### Consultar extrato
+
+```bash
+curl http://localhost:8082/scheduled-transfers
+```
+
+Resposta esperada:
+
+```json
+[
+  {
+    "id": 1,
+    "sourceAccount": "1234567890",
+    "destinationAccount": "0987654321",
+    "amount": 1000.00,
+    "fee": 12.00,
+    "totalAmount": 1012.00,
+    "transferDate": "2026-06-03",
+    "schedulingDate": "2026-05-24"
+  }
+]
+```
