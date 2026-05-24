@@ -1,6 +1,8 @@
 package br.com.tokio.transfer.scheduler.service;
 
+import br.com.tokio.transfer.scheduler.mapper.ScheduledTransferMapper;
 import br.com.tokio.transfer.scheduler.model.ScheduledTransfer;
+import br.com.tokio.transfer.scheduler.repository.ScheduledTransferRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ import java.time.LocalDate;
 public class ScheduledTransferService {
 
     private final TransferFeeCalculator transferFeeCalculator;
+    private final ScheduledTransferRepository scheduledTransferRepository;
+    private final ScheduledTransferMapper scheduledTransferMapper;
     private final Clock clock = Clock.systemDefaultZone();
 
     public ScheduledTransfer schedule(
@@ -29,7 +33,7 @@ public class ScheduledTransferService {
                 transferDate
         );
 
-        return new ScheduledTransfer(
+        ScheduledTransfer scheduledTransfer = new ScheduledTransfer(
                 null,
                 sourceAccount,
                 destinationAccount,
@@ -37,6 +41,12 @@ public class ScheduledTransferService {
                 fee,
                 transferDate,
                 schedulingDate
+        );
+
+        return scheduledTransferMapper.toDomain(
+                scheduledTransferRepository.save(
+                        scheduledTransferMapper.toEntity(scheduledTransfer)
+                )
         );
     }
 }
