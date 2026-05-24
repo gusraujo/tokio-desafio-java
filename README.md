@@ -161,6 +161,29 @@ Resposta esperada:
 ]
 ```
 
+## Como executar com Docker (recomendado)
+
+Na raiz do projeto, execute:
+
+```bash
+docker-compose up --build
+```
+
+O Docker Compose sobe o backend e, assim que ele estiver saudável, sobe o frontend:
+
+```text
+Frontend → http://localhost:80
+Backend  → http://localhost:8082
+```
+
+Para parar os containers:
+
+```bash
+docker-compose down
+```
+
+---
+
 ## Como executar o frontend
 
 Entre na pasta do frontend:
