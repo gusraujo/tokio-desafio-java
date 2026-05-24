@@ -117,7 +117,9 @@ export class TransferSchedulingComponent implements OnInit {
       next: (response) => {
         this.lastTransfer = response;
         this.successMessage = 'Transferência agendada com sucesso!';
+        const { sourceAccount, destinationAccount } = this.form.value;
         this.form.reset();
+        this.form.patchValue({ sourceAccount, destinationAccount });
         this.submitting = false;
         this.cdr.markForCheck();
         this.loadTransfers();
