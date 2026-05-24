@@ -34,11 +34,11 @@ Principais decisoes:
 
 - `ScheduledTransfer` foi mantida como objeto de dominio, separado da entidade JPA.
 - `ScheduledTransferEntity` representa a tabela no banco H2.
-- `ScheduledTransferMapper` converte entre dominio e persistencia.
+- `ScheduledTransferMapper` converte entre dominio e persistência.
 - `ScheduledTransferControllerMapper` converte dominio para resposta da API.
 - O cálculo da taxa foi isolado em `TransferFeeCalculator`.
 - Valores financeiros usam `BigDecimal`.
-- Erros da API sao padronizados por `GlobalExceptionHandler`.
+- Erros da API são padronizados por `GlobalExceptionHandler`.
 
 
 ## Como executar o backend
@@ -90,13 +90,7 @@ POST /scheduled-transfers
 GET  /scheduled-transfers
 ```
 
-## Exemplos com curl
-
-Os exemplos abaixo consideram que a API esta rodando em `http://localhost:8082`.
-
-Observacao: as datas dos exemplos foram montadas considerando a execucao em `2026-05-24`. Se executar em outro dia, ajuste `transferDate` para ficar dentro ou fora das faixas desejadas.
-
-### Agendar transferencia valida
+### Agendar transferência valida
 
 ```bash
 curl -X POST http://localhost:8082/scheduled-transfers \
