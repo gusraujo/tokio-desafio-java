@@ -5,7 +5,8 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -45,15 +46,15 @@ public class ScheduledTransfer {
         this.destinationAccount = requireNonBlank(destinationAccount, "destinationAccount");
         this.amount = requirePositive(amount, "amount");
         this.fee = requireNonNegative(fee, "fee");
-        this.transferDate = Objects.requireNonNull(transferDate, "transferDate is required");
-        this.schedulingDate = Objects.requireNonNull(schedulingDate, "schedulingDate is required");
+        this.transferDate = requireNonNull(transferDate, "transferDate is required");
+        this.schedulingDate = requireNonNull(schedulingDate, "schedulingDate is required");
 
         if (transferDate.isBefore(schedulingDate)) {
-            throw new IllegalArgumentException("Transfer date cannot be before schedulingDate");
+            throw new IllegalArgumentException("transfer date cannot be before schedulingDate");
         }
 
         if (this.sourceAccount.equals(this.destinationAccount)) {
-            throw new IllegalArgumentException("Source account and Destination account must be different");
+            throw new IllegalArgumentException("source account and destination account must be different");
         }
     }
 
@@ -66,7 +67,7 @@ public class ScheduledTransfer {
     }
 
     private static BigDecimal requirePositive(BigDecimal value, String fieldName) {
-        Objects.requireNonNull(value, fieldName + " is required");
+        requireNonNull(value, fieldName + " is required");
 
         if (value.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException(fieldName + " must be greater than zero");
@@ -76,7 +77,7 @@ public class ScheduledTransfer {
     }
 
     private static BigDecimal requireNonNegative(BigDecimal value, String fieldName) {
-        Objects.requireNonNull(value, fieldName + " is required");
+        requireNonNull(value, fieldName + " is required");
 
         if (value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException(fieldName + " cannot be negative");
