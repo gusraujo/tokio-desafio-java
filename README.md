@@ -1,11 +1,11 @@
 # tokio-desafio-java
 
-Projeto desenvolvido como parte de uma avaliacao tecnica para processo seletivo da Tokio Marine.
+Projeto desenvolvido como parte de uma avaliação tecnica para processo seletivo da Tokio Marine.
 
 A aplicação permite o agendamento de transferências financeiras, calcula automáticamente a taxa aplicável de acordo com a data escolhida para a transferência e permite consultar o extrato dos agendamentos cadastrados.
 
 
-## Tecnologias
+## Técnologias
 
 ### Backend
 
