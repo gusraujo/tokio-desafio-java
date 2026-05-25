@@ -161,7 +161,7 @@ Resposta esperada:
 ]
 ```
 
-## Como executar com Docker (recomendado)
+## Como executar com Docker
 
 Na raiz do projeto, execute:
 
@@ -174,12 +174,6 @@ O Docker Compose sobe o backend e, assim que ele estiver saudável, sobe o front
 ```text
 Frontend → http://localhost:80
 Backend  → http://localhost:8082
-```
-
-Para parar os containers:
-
-```bash
-docker-compose down
 ```
 
 ---
@@ -223,7 +217,7 @@ src/app/
 └── pages/
     └── transfer-scheduling/
         ├── *.component.ts        # Lógica, Reactive Forms e tratamento de erros
-        ├── *.component.html      # Template com @if/@for (Angular 17+ block syntax)
+        ├── *.component.html      # Template
         └── *.component.css       # Estilos responsivos
 ```
 
